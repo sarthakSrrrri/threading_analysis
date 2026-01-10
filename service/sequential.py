@@ -26,7 +26,7 @@ def run_sequential():
 
     return{
 
-        "total_run_time" : round(total_run_time , 3),
+        "total_run_tim" : round(total_run_time , 3),
         "memory_usage" : round(end_memory - get_usage , 3),
         "r1" : r1,
         "r2" : r2,
