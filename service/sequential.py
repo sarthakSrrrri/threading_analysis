@@ -12,8 +12,9 @@ v2 = os.getenv("E2")
 v3 = os.getenv("E3")
 
 price_list = []
-
-
+rating_list = []
+r1_dict = []
+dict_for_duplicacy = {}
 def fetch(url, result_dict, key):
     result_dict[key] = requests.get(url).json()
 
@@ -54,56 +55,38 @@ def run_threaded():
 def run_sequential():
     start_time = time.time()
     get_usage = get_metrices()
+    max_price = price_list[0]
+
     r1 = requests.get(v1).json()
     r2 = requests.get(v2).json()
     r3 = requests.get(v3).json()
 
-
     for i in r1.get("products"):
-        price_list.append(i["price"]) # getting maximum price value
+        price_list.append(i["price"]) # Appending the price value
     
-    max_price = price_list[0]
-
-    for i in range(0, len(price_list)-1):    
+    for i in r1.get("products"): # Appending the rating in the list
+        r1_dict.append(i["rating"])
+    
+    for i in range(0, len(price_list)-1):     # getting the max price value
         if max_price < price_list[i]:
             max_price = price_list[i]
-    print(f"This is Max price :  {max_price}")
     
-    dict_for_duplicacy = {}
-
-    for i in range(0,len(price_list)):
+    for i in range(0,len(price_list)): # getting the duplcate list of rating
         count = 1
         for j in range(i+1 , len(price_list)):
             if price_list[i] == price_list[j]:
                 count = count + 1
-                dict_for_duplicacy.update({price_list[i]: count})
+                dict_for_duplicacy.update({price_list[i]: count}) # appending the duplicate entry
+    
+    find_highest_rating = r1_dict[0]
 
-
-
-    print(f"Dictinary with duplicate count : {dict_for_duplicacy}")
+    for i in range(0,len(r1_dict)): # getting the highest rating
+        if find_highest_rating < r1_dict[i]:
+            find_highest_rating = r1_dict[i]
 
     end_memory = get_metrices()
     end_time = time.time()
     total_run_time = end_time - start_time 
-    r1_dict = []
-
-
-    for i in r1.get("products"):
-        r1_dict.append(i["rating"])
-    print(f"This is ratimg list :  {r1_dict}")
-
-    find_highest_rating = r1_dict[0]
-    for i in range(0,len(r1_dict)):
-        if find_highest_rating < r1_dict[i]:
-            find_highest_rating = r1_dict[i]
-        
-    print(F"This is Highest rating { find_highest_rating}")
-    
-    processed_Data = {
-        "status" : True,
-        "highest_price" : max_price,
-        "highest_rating" : find_highest_rating
-    }
 
     return{
 
@@ -113,17 +96,3 @@ def run_sequential():
         "r2" : r2,
         "r3" : r3
     }
-
-
-
-def process_github(data: dict) -> dict:
-    login_id = data["login"]
-    uri = data["url"]
-    name = data["name"]
-    bio = data["bio"]
-    pass
-
-
-
-def do_the_data_analysis():
-    pass
