@@ -4,7 +4,7 @@ import time
 import os
 from dotenv import load_dotenv
 from utils.metrice import get_metrices
-
+import threading
 load_dotenv()
 
 v1 = os.getenv("E1")
@@ -51,8 +51,6 @@ def run_threaded():
     }
 
 
-
-
 def run_sequential():
     start_time = time.time()
     get_usage = get_metrices()
@@ -62,7 +60,7 @@ def run_sequential():
 
 
     for i in r1.get("products"):
-        price_list.append(i["price"])
+        price_list.append(i["price"]) # getting maximum price value
     
     max_price = price_list[0]
 
@@ -70,6 +68,19 @@ def run_sequential():
         if max_price < price_list[i]:
             max_price = price_list[i]
     print(f"This is Max price :  {max_price}")
+    
+    dict_for_duplicacy = {}
+
+    for i in range(0,len(price_list)):
+        count = 1
+        for j in range(i+1 , len(price_list)):
+            if price_list[i] == price_list[j]:
+                count = count + 1
+                dict_for_duplicacy.update({price_list[i]: count})
+
+
+
+    print(f"Dictinary with duplicate count : {dict_for_duplicacy}")
 
     end_memory = get_metrices()
     end_time = time.time()
@@ -98,7 +109,7 @@ def run_sequential():
 
         "total_run_time" : round(total_run_time , 3),
         "memory_usage" : round(end_memory - get_usage , 3),
-        "r1" : processed_Data,
+        "r1" : r1,
         "r2" : r2,
         "r3" : r3
     }
